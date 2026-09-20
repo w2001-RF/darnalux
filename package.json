@@ -1,0 +1,16 @@
+{
+    "name": "darnalux",
+    "private": true,
+    "packageManager": "pnpm@10.15.0",
+    "scripts": {
+        "dev:web": "pnpm --filter @darnalux/web dev --host",
+        "build": "pnpm -r build",
+        "typecheck": "pnpm -r typecheck",
+        "lint": "pnpm -r lint",
+        "test": "pnpm -r test"
+    },
+    "devDependencies": {
+        "turbo": "^2.5.6",
+        "typescript": "^5.9.2"
+    }
+}

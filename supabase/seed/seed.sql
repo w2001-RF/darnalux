@@ -1,0 +1,6 @@
+-- Local development seed data.
+--
+-- Reference data (roles, permissions, role_permissions) is provisioned by the
+-- migration itself so it exists identically in every environment. This file
+-- is reserved for local-only convenience data (e.g. demo auth users created
+-- via the Supabase Studio/CLI) and is intentionally left empty for Phase 1.
