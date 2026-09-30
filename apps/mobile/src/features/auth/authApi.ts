@@ -1,6 +1,6 @@
 import type { AuthUser, ProfileRow } from '@darnalux/core';
-import { AuthNetworkError, InvalidCredentialsError, PasswordResetError, toAuthUser } from '@darnalux/core';
-import { supabase } from '../../lib/supabaseClient';
+import { AuthNetworkError, InvalidCredentialsError, toAuthUser } from '@darnalux/core';
+import { supabase } from '../../lib/supabase';
 
 export async function signInWithPassword(email: string, password: string): Promise<void> {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -15,22 +15,8 @@ export async function signOut(): Promise<void> {
   await supabase.auth.signOut();
 }
 
-export async function requestPasswordReset(email: string): Promise<void> {
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}reset-password`,
-  });
-  if (error) throw new PasswordResetError();
-}
-
-export async function updatePassword(newPassword: string): Promise<void> {
-  const { error } = await supabase.auth.updateUser({ password: newPassword });
-  if (error) throw new PasswordResetError();
-}
-
-// Loads the current user's profile + roles + permissions. Roles/permissions
-// are read through the my_roles()/my_permissions() SECURITY DEFINER RPCs
-// (see supabase/migrations) rather than joined tables, so the Web client
-// never needs direct RLS-sensitive access to role_permissions.
+// Same queries as the Web client: profile row plus my_roles()/my_permissions() RPCs.
+// Authorization data never comes from user-editable user_metadata.
 export async function loadAuthUser(userId: string, email: string | null): Promise<AuthUser> {
   const [profileResult, rolesResult, permissionsResult] = await Promise.all([
     supabase

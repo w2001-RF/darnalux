@@ -4,8 +4,10 @@
     "packageManager": "pnpm@10.15.0",
     "scripts": {
         "dev:web": "pnpm --filter @darnalux/web dev --host",
+        "dev:mobile": "pnpm --filter @darnalux/mobile start",
         "build": "pnpm -r build",
-        "typecheck": "pnpm -r typecheck",
+        "build:web": "pnpm --filter \"@darnalux/web...\" build",
+        "typecheck": "pnpm --filter @darnalux/core build && pnpm -r typecheck",
         "lint": "pnpm -r lint",
         "test": "pnpm -r test"
     },
