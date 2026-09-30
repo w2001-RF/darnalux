@@ -8,6 +8,8 @@ dist
 package-lock.json
 yarn.lock
 
+supabase/.temp/*
+
 expo-env.d.ts
 
 apps/mobile/.env
