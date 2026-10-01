@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom';
+import { Brand } from '../components/Brand';
 
 export default function NotFoundPage() {
   return (
     <div className="notfound">
-      <Link to="/" className="brand"><span className="brand-mark">D</span><span>Darna<span>Lux</span></span></Link>
+      <Brand />
+      <div className="notfound-code" aria-hidden="true">404</div>
       <h1>Page introuvable.</h1>
-      <Link className="primary" to="/">Retour à l'accueil</Link>
+      <p>La page que vous cherchez n'existe pas ou a été déplacée.</p>
+      <Link className="btn btn-primary btn-lg" to="/">Retour à l'accueil</Link>
     </div>
   );
 }

@@ -5,6 +5,9 @@ import { Link, Navigate, useLocation } from 'react-router-dom';
 import { AuthNetworkError, InvalidCredentialsError } from '@darnalux/core';
 import { useAuth } from '../features/auth/AuthContext';
 import { signInWithPassword } from '../features/auth/authApi';
+import { AuthShell } from '../features/auth/AuthShell';
+import { PasswordField } from '../components/PasswordField';
+import { ErrorAlert } from '../components/Feedback';
 
 export default function LoginPage() {
   const { status, error: sessionError } = useAuth();
@@ -19,7 +22,6 @@ export default function LoginPage() {
     const redirectTo = from ? `${from.pathname}${from.search}${from.hash}` : '/app';
     return <Navigate to={redirectTo} replace />;
   }
-
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -41,41 +43,39 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="auth-page">
-      <form className="auth-card" onSubmit={handleSubmit}>
-        <Link to="/" className="brand"><span className="brand-mark">D</span><span>Darna<span>Lux</span></span></Link>
-        <h1>Connexion</h1>
-        <p className="auth-subtitle">Accédez à votre espace DarnaLux.</p>
+    <AuthShell title="Connexion" subtitle="Accédez à votre espace DarnaLux.">
+      <form className="form-stack" onSubmit={handleSubmit}>
+        {sessionError && <ErrorAlert>{sessionError}</ErrorAlert>}
+        {formError && <ErrorAlert>{formError}</ErrorAlert>}
 
-        {sessionError && <div className="auth-error">{sessionError}</div>}
-        {formError && <div className="auth-error">{formError}</div>}
+        <div className="field">
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
 
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          autoComplete="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <label htmlFor="password">Mot de passe</label>
-        <input
+        <PasswordField
           id="password"
-          type="password"
+          label="Mot de passe"
           autoComplete="current-password"
-          required
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={setPassword}
         />
 
-        <button className="primary" type="submit" disabled={submitting}>
+        <button className="btn btn-primary btn-lg btn-block" type="submit" disabled={submitting}>
           {submitting ? 'Connexion…' : 'Se connecter'}
         </button>
 
-        <Link className="secondary" to="/forgot-password">Mot de passe oublié ?</Link>
+        <div className="auth-links">
+          <Link className="btn btn-link btn-sm" to="/forgot-password">Mot de passe oublié ?</Link>
+        </div>
       </form>
-    </div>
+    </AuthShell>
   );
 }

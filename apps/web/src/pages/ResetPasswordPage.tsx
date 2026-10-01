@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { PasswordResetError } from '@darnalux/core';
 import { updatePassword } from '../features/auth/authApi';
+import { AuthShell } from '../features/auth/AuthShell';
+import { PasswordField } from '../components/PasswordField';
+import { ErrorAlert } from '../components/Feedback';
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -42,38 +45,29 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="auth-page">
-      <form className="auth-card" onSubmit={handleSubmit}>
-        <Link to="/" className="brand"><span className="brand-mark">D</span><span>Darna<span>Lux</span></span></Link>
-        <h1>Nouveau mot de passe</h1>
-        <p className="auth-subtitle">Choisissez un nouveau mot de passe pour votre compte.</p>
+    <AuthShell title="Nouveau mot de passe" subtitle="Choisissez un nouveau mot de passe pour votre compte.">
+      <form className="form-stack" onSubmit={handleSubmit}>
+        {error && <ErrorAlert>{error}</ErrorAlert>}
 
-        {error && <div className="auth-error">{error}</div>}
-
-        <label htmlFor="password">Nouveau mot de passe</label>
-        <input
+        <PasswordField
           id="password"
-          type="password"
+          label="Nouveau mot de passe"
           autoComplete="new-password"
-          required
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={setPassword}
         />
-
-        <label htmlFor="confirmPassword">Confirmer le mot de passe</label>
-        <input
+        <PasswordField
           id="confirmPassword"
-          type="password"
+          label="Confirmer le mot de passe"
           autoComplete="new-password"
-          required
           value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          onChange={setConfirmPassword}
         />
 
-        <button className="primary" type="submit" disabled={submitting}>
+        <button className="btn btn-primary btn-lg btn-block" type="submit" disabled={submitting}>
           {submitting ? 'Enregistrement…' : 'Réinitialiser le mot de passe'}
         </button>
       </form>
-    </div>
+    </AuthShell>
   );
 }

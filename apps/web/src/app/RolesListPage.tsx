@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { ShieldCheck } from 'lucide-react';
 import { PERMISSIONS } from '@darnalux/core';
 import { supabase } from '../lib/supabaseClient';
 import { RequirePermission } from '../features/auth/RequirePermission';
+import { ErrorAlert, InfoAlert, Loading } from '../components/Feedback';
 
 interface RoleWithPermissions {
   id: string;
@@ -37,21 +39,39 @@ function RolesListContent() {
     };
   }, []);
 
-  if (loading) return <p>Chargement des rôles…</p>;
-  if (error) return <p className="auth-error">{error}</p>;
+  if (loading) return <Loading label="Chargement des rôles…" />;
+  if (error) return <ErrorAlert>{error}</ErrorAlert>;
 
   return (
-    <div className="panel">
-      <div className="panel-head"><h2>Rôles</h2></div>
-      <p className="auth-info">
+    <div className="page-stack">
+      <InfoAlert>
         Lecture seule pour cette phase : la gestion complète des permissions par rôle sera ouverte ultérieurement.
-      </p>
-      {roles.map((role) => (
-        <div className="role-card" key={role.id}>
-          <b>{role.name}</b>
-          <span>{role.role_permissions.map((rp) => rp.permissions?.name).filter(Boolean).join(', ') || 'Aucune permission'}</span>
-        </div>
-      ))}
+      </InfoAlert>
+      <div className="role-grid">
+        {roles.map((role) => {
+          const permissionNames = role.role_permissions
+            .map((rp) => rp.permissions?.name)
+            .filter((n): n is string => Boolean(n));
+          return (
+            <article className="role-card" key={role.id}>
+              <div className="role-card-head">
+                <span className="role-card-icon"><ShieldCheck size={20} aria-hidden="true" /></span>
+                <div>
+                  <h3>{role.name}</h3>
+                  <small>{permissionNames.length} {permissionNames.length > 1 ? 'permissions' : 'permission'}</small>
+                </div>
+              </div>
+              {permissionNames.length > 0 ? (
+                <div className="chips">
+                  {permissionNames.map((name) => <span className="chip" key={name}>{name}</span>)}
+                </div>
+              ) : (
+                <span className="dim">Aucune permission</span>
+              )}
+            </article>
+          );
+        })}
+      </div>
     </div>
   );
 }

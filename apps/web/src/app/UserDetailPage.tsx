@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import { PERMISSIONS, hasPermission } from '@darnalux/core';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../features/auth/AuthContext';
 import { RequirePermission } from '../features/auth/RequirePermission';
+import { Avatar, initialsOf } from '../components/Avatar';
+import { ErrorAlert, InfoAlert, Loading } from '../components/Feedback';
 
 interface ProfileDetail {
   id: string;
@@ -71,38 +74,67 @@ function UserDetailContent() {
     }
   }
 
-  if (loading) return <p>Chargement…</p>;
-  if (error || !profile) return <p className="auth-error">{error ?? 'Utilisateur introuvable.'}</p>;
+  const backLink = (
+    <Link className="back-link" to="/app/users"><ArrowLeft size={16} aria-hidden="true" /> Retour aux utilisateurs</Link>
+  );
+
+  if (loading) return <Loading />;
+  if (error || !profile) {
+    return (
+      <div>
+        {backLink}
+        <ErrorAlert>{error ?? 'Utilisateur introuvable.'}</ErrorAlert>
+      </div>
+    );
+  }
+
+  const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || 'Sans nom';
 
   return (
-    <div className="panel">
-      <div className="panel-head"><h2>{profile.first_name ?? ''} {profile.last_name ?? ''}</h2></div>
-      <p>Téléphone : {profile.phone ?? '—'}</p>
-      <p>Statut : {profile.is_active ? 'Actif' : 'Désactivé'}</p>
+    <div>
+      {backLink}
+      <section className="panel">
+        <div className="profile-head">
+          <Avatar large initials={initialsOf(profile.first_name, profile.last_name)} />
+          <div>
+            <h2>{fullName}</h2>
+            <span className={'badge ' + (profile.is_active ? 'badge-success' : 'badge-muted')}>
+              {profile.is_active ? 'Actif' : 'Désactivé'}
+            </span>
+          </div>
+        </div>
 
-      <h3>Rôles</h3>
-      {isSelf && canUpdate && (
-        <p className="auth-info">Vous ne pouvez pas modifier vos propres rôles.</p>
-      )}
-      {canUpdate ? (
-        <ul className="role-checklist">
-          {allRoles.map((role) => (
-            <li key={role.id}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={assignedRoleIds.includes(role.id)}
-                  disabled={isSelf}
-                  onChange={() => toggleRole(role.id, assignedRoleIds.includes(role.id))}
-                />
-                {role.name}
-              </label>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>Consultez un administrateur pour modifier les rôles.</p>
-      )}
+        <dl className="facts">
+          <div><dt>Téléphone</dt><dd>{profile.phone ?? '—'}</dd></div>
+          <div><dt>Statut</dt><dd>{profile.is_active ? 'Actif' : 'Désactivé'}</dd></div>
+        </dl>
+
+        <h3 className="section-title">Rôles</h3>
+        {isSelf && canUpdate && (
+          <div className="page-stack">
+            <InfoAlert>Vous ne pouvez pas modifier vos propres rôles.</InfoAlert>
+          </div>
+        )}
+        {canUpdate ? (
+          <ul className="role-checklist">
+            {allRoles.map((role) => (
+              <li key={role.id}>
+                <label className="role-option">
+                  <input
+                    type="checkbox"
+                    checked={assignedRoleIds.includes(role.id)}
+                    disabled={isSelf}
+                    onChange={() => toggleRole(role.id, assignedRoleIds.includes(role.id))}
+                  />
+                  {role.name}
+                </label>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="dim">Consultez un administrateur pour modifier les rôles.</p>
+        )}
+      </section>
     </div>
   );
 }

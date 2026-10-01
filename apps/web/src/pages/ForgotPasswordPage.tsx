@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import { requestPasswordReset } from '../features/auth/authApi';
+import { AuthShell } from '../features/auth/AuthShell';
+import { InfoAlert } from '../components/Feedback';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -22,35 +25,35 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="auth-page">
-      <form className="auth-card" onSubmit={handleSubmit}>
-        <Link to="/" className="brand"><span className="brand-mark">D</span><span>Darna<span>Lux</span></span></Link>
-        <h1>Mot de passe oublié</h1>
-        <p className="auth-subtitle">Recevez un lien de réinitialisation par email.</p>
-
+    <AuthShell title="Mot de passe oublié" subtitle="Recevez un lien de réinitialisation par email.">
+      <form className="form-stack" onSubmit={handleSubmit}>
         {sent ? (
-          <div className="auth-info">
+          <InfoAlert>
             Si un compte existe pour cet email, un lien de réinitialisation vient d'être envoyé.
-          </div>
+          </InfoAlert>
         ) : (
           <>
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <button className="primary" type="submit" disabled={submitting}>
+            <div className="field">
+              <label htmlFor="email">Email</label>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <button className="btn btn-primary btn-lg btn-block" type="submit" disabled={submitting}>
               {submitting ? 'Envoi…' : 'Envoyer le lien'}
             </button>
           </>
         )}
 
-        <Link className="secondary" to="/login">Retour à la connexion</Link>
+        <div className="auth-links">
+          <Link className="btn btn-link btn-sm" to="/login"><ArrowLeft size={16} aria-hidden="true" /> Retour à la connexion</Link>
+        </div>
       </form>
-    </div>
+    </AuthShell>
   );
 }

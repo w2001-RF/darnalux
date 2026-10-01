@@ -5,12 +5,24 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <meta name="theme-color" content="#0d1b16" />
+    <meta name="theme-color" content="#06101e" />
     <meta name="description" content="DarnaLux — plateforme de gestion de conciergerie immobilière." />
     <title>DarnaLux Concierge - Votre maison, notre signature</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Raleway:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;1,400;1,500&family=Raleway:wght@400;500;600;700&display=swap"
         rel="stylesheet" />
+    <script type="text/javascript">
+        // Applies the saved theme before first paint (see components/ThemeToggle.tsx).
+        (function () {
+            try {
+                if (localStorage.getItem('darnalux-theme') === 'light') {
+                    document.documentElement.dataset.theme = 'light';
+                }
+            } catch (e) { }
+        }());
+    </script>
     <script type="text/javascript">
         // Single Page Apps for GitHub Pages
         // https://github.com/rafgraph/spa-github-pages
