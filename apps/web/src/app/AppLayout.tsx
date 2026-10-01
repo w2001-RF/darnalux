@@ -1,18 +1,15 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, LogOut, Menu, ShieldCheck, Users } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-import { PERMISSIONS, hasPermission } from '@darnalux/core';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { LogOut, Menu } from 'lucide-react';
+import { hasAnyPermission, personFullName } from '@darnalux/core';
 import { useAuth } from '../features/auth/AuthContext';
+import { isPortalUser } from '../features/auth/portal';
 import { Brand } from '../components/Brand';
 import { Avatar, initialsOf } from '../components/Avatar';
 import { ThemeToggle } from '../components/ThemeToggle';
-
-interface NavItem {
-  to: string;
-  label: string;
-  icon: LucideIcon;
-}
+import { NAV_SECTIONS } from './navigation';
+import { GlobalSearch } from './GlobalSearch';
+import { NotificationBell } from './NotificationBell';
 
 export default function AppLayout() {
   const { user, signOut } = useAuth();
@@ -38,40 +35,45 @@ export default function AppLayout() {
     navigate('/', { replace: true });
   }
 
-  const navItems: NavItem[] = [{ to: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard }];
-  if (hasPermission(user, PERMISSIONS.USERS_VIEW)) {
-    navItems.push({ to: '/app/users', label: 'Utilisateurs', icon: Users });
-  }
-  if (hasPermission(user, PERMISSIONS.ROLES_VIEW) || hasPermission(user, PERMISSIONS.ROLES_MANAGE)) {
-    navItems.push({ to: '/app/roles', label: 'Rôles', icon: ShieldCheck });
-  }
+  const portal = isPortalUser(user);
+  const sections = NAV_SECTIONS.map((section) => ({
+    ...section,
+    items: section.items.filter(
+      (item) => (!item.portalOnly || portal) && (item.anyOf.length === 0 || hasAnyPermission(user, item.anyOf)),
+    ),
+  })).filter((section) => section.items.length > 0);
 
   const firstName = user?.profile?.firstName;
-  const displayName = [firstName, user?.profile?.lastName].filter(Boolean).join(' ') || user?.email || 'DarnaLux';
-  const initials = initialsOf(firstName, user?.profile?.lastName) === '?'
-    ? initialsOf(user?.email)
-    : initialsOf(firstName, user?.profile?.lastName);
+  const lastName = user?.profile?.lastName;
+  const displayName = personFullName(firstName, lastName) || user?.email || 'DarnaLux';
+  const initials = initialsOf(firstName, lastName) === '?' ? initialsOf(user?.email) : initialsOf(firstName, lastName);
 
   return (
     <div className="app">
       <div className={'scrim' + (menuOpen ? ' open' : '')} onClick={() => setMenuOpen(false)} aria-hidden="true" />
       <aside id="sidebar" className={'sidebar' + (menuOpen ? ' open' : '')} aria-label="Menu latéral">
-        <Brand light />
-        <div className="side-title">ESPACE DARNALUX</div>
+        <Brand light to="/app" />
         <nav className="side-nav" aria-label="Navigation de l'espace">
-          {navItems.map(({ to, label, icon: Icon }) => (
-            <NavLink key={to} to={to} className={({ isActive }) => 'side-link' + (isActive ? ' active' : '')}>
-              <Icon size={19} aria-hidden="true" />
-              {label}
-            </NavLink>
+          {sections.map((section) => (
+            <div className="side-section" key={section.title}>
+              <div className="side-title">{section.title}</div>
+              {section.items.map(({ to, label, icon: Icon }) => (
+                <NavLink key={to} to={to} className={({ isActive }) => 'side-link' + (isActive ? ' active' : '')}>
+                  <Icon size={18} aria-hidden="true" />
+                  {label}
+                </NavLink>
+              ))}
+            </div>
           ))}
         </nav>
         <div className="side-user">
-          <Avatar initials={initials} />
-          <div className="side-user-info">
-            <strong>{displayName}</strong>
-            <small>{user?.email ?? ''}</small>
-          </div>
+          <Link to="/app/profile" className="side-user-link" aria-label="Mon profil">
+            <Avatar initials={initials} />
+            <div className="side-user-info">
+              <strong>{displayName}</strong>
+              <small>{user?.email ?? ''}</small>
+            </div>
+          </Link>
           <button type="button" className="icon-btn" onClick={handleLogout} aria-label="Se déconnecter" title="Se déconnecter">
             <LogOut size={18} aria-hidden="true" />
           </button>
@@ -89,11 +91,13 @@ export default function AppLayout() {
           >
             <Menu size={20} aria-hidden="true" />
           </button>
-          <div>
+          <div className="header-greeting">
             <div className="eyebrow">DarnaLux</div>
             <h1>Bonjour, {firstName ?? user?.email ?? 'DarnaLux'}.</h1>
           </div>
+          <GlobalSearch />
           <div className="header-actions">
+            <NotificationBell />
             <ThemeToggle />
           </div>
         </header>

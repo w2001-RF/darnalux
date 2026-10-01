@@ -627,6 +627,23 @@ input {
   color: #fff;
 }
 
+:root[data-theme='light'] .nav {
+  background: rgb(255 255 255 / 0.9);
+  border-bottom-color: var(--line);
+}
+
+:root[data-theme='light'] .nav nav a {
+  color: var(--muted);
+}
+
+:root[data-theme='light'] .nav nav a:hover {
+  color: var(--gold-d);
+}
+
+:root[data-theme='light'] .nav .brand-name span {
+  color: var(--text);
+}
+
 .hero {
   position: relative;
   min-height: min(100vh, 860px);
@@ -638,6 +655,38 @@ input {
     linear-gradient(to bottom, rgb(6 16 30 / 0.78) 0%, rgb(6 16 30 / 0.55) 45%, rgb(6 16 30 / 0.92) 100%),
     url('./assets/rabat.jpg') 22% center / cover no-repeat,
     var(--ink);
+}
+
+:root[data-theme='light'] .hero {
+  color: var(--text);
+  background:
+    linear-gradient(to bottom, rgb(255 255 255 / 0.9) 0%, rgb(255 255 255 / 0.72) 45%, rgb(243 244 246 / 0.96) 100%),
+    url('./assets/rabat.jpg') 22% center / cover no-repeat,
+    var(--bg);
+}
+
+:root[data-theme='light'] .hero h1 {
+  text-shadow: none;
+}
+
+:root[data-theme='light'] .hero .eyebrow {
+  color: var(--gold-text);
+}
+
+:root[data-theme='light'] .hero-lead,
+:root[data-theme='light'] .trust {
+  color: var(--text-soft);
+}
+
+:root[data-theme='light'] .hero .btn-ghost {
+  border-color: var(--ghost-line);
+  color: var(--text);
+  background: rgb(255 255 255 / 0.6);
+}
+
+:root[data-theme='light'] .hero .btn-ghost:hover {
+  border-color: var(--gold-d);
+  color: var(--gold-d);
 }
 
 .hero::before {

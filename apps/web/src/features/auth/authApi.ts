@@ -1,6 +1,7 @@
 import type { AuthUser, ProfileRow } from '@darnalux/core';
 import { AuthNetworkError, InvalidCredentialsError, PasswordResetError, toAuthUser } from '@darnalux/core';
 import { supabase } from '../../lib/supabaseClient';
+import { appUrl } from '../../lib/appRoot';
 
 export async function signInWithPassword(email: string, password: string): Promise<void> {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -17,7 +18,7 @@ export async function signOut(): Promise<void> {
 
 export async function requestPasswordReset(email: string): Promise<void> {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}reset-password`,
+    redirectTo: appUrl('reset-password'),
   });
   if (error) throw new PasswordResetError();
 }
