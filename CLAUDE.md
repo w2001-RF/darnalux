@@ -59,7 +59,7 @@ Work in explicit phases; implement only the phase the user authorizes. Current p
 Before a phase: inspect the current repository, instructions, dependencies, tests, and owning code path. Do not recreate existing work or begin later-phase features. For database changes, add a new timestamped migration; never rewrite a migration that may already have been applied.
 
 ## Dependency and Infrastructure Policy
-- Root `.npmrc` configures the Orange npm proxy: `https://repos.tech.orange/artifactory/api/npm/npmproxy/`. Keep dependency resolution on approved Orange infrastructure; do not silently fall back to public npm/PyPI/Maven/Docker registries.
+- Dependencies resolve from the public npm registry (pnpm default). There is no root `.npmrc` and the lockfile has no pinned `tarball:` URLs; do not reintroduce a private registry or proxy URL. Keep the pinned lockfile and its integrity hashes.
 - Do not add/update dependencies unless required. Use the workspace's existing package manager and lockfile.
 - Do not run `pnpm approve-builds` automatically. Review the package/build-script requirement and ask for approval before enabling scripts.
 - Preserve the current static Vite deployment and GitHub Pages workflow. Do not add SSR, a production Node server, API routes, or server actions.
