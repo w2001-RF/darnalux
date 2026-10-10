@@ -25,10 +25,10 @@ import type { LucideIcon } from 'lucide-react';
 import { Brand } from '../components/Brand';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { ESTIMATE_ZONES, PROPERTY_CONFIGS, estimateRevenue } from '@darnalux/core';
-import { CONTACT_EMAIL, CONTACT_PHONE, buildQuoteMailto } from '../lib/contact';
+import { CONTACT_EMAIL, CONTACT_PHONE } from '../lib/contact';
+import { submitContactRequest } from '../features/leads/api';
+import { toUserMessage } from '../lib/errors';
 import '../landing.css';
-
-const canContact = CONTACT_EMAIL !== '';
 
 const stats = [['24/7', 'Suivi opérationnel'], ['100%', 'Vue centralisée'], ['1', 'Interlocuteur dédié']];
 
@@ -113,11 +113,6 @@ const mad = new Intl.NumberFormat('fr-FR');
 const zoneLabel = (id: string) => ESTIMATE_ZONES.find((z) => z.id === id)?.label ?? '';
 const configLabel = (id: string) => PROPERTY_CONFIGS.find((c) => c.id === id)?.label ?? '';
 
-function estimateText(p: Profile): string {
-  const e = estimateRevenue({ zoneId: p.zoneId, configId: p.configId });
-  return e ? `${mad.format(e.monthlyLow)} – ${mad.format(e.monthlyHigh)} MAD / mois (brut, indicatif)` : '';
-}
-
 type Step = 'place' | 'analysis' | 'done';
 
 const initialDetails = { situation: 'À confirmer', support: 'Je souhaite être conseillé', name: '', email: '', phone: '', slot: '', consent: false };
@@ -125,6 +120,8 @@ const initialDetails = { situation: 'À confirmer', support: 'Je souhaite être 
 function EstimatorCard({ profile, setProfile }: { profile: Profile; setProfile: SetProfile }) {
   const [step, setStep] = useState<Step>('place');
   const [details, setDetails] = useState(initialDetails);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
   const patch = (changes: Partial<Profile>) => setProfile((p) => ({ ...p, ...changes }));
   const setD = (key: 'situation' | 'support' | 'name' | 'email' | 'phone' | 'slot') => (e: { target: { value: string } }) =>
     setDetails((d) => ({ ...d, [key]: e.target.value }));
@@ -137,21 +134,34 @@ function EstimatorCard({ profile, setProfile }: { profile: Profile; setProfile: 
     setStep('analysis');
   }
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
-    window.location.href = buildQuoteMailto(CONTACT_EMAIL, {
-      name: details.name,
-      email: details.email,
-      phone: details.phone,
-      slot: details.slot,
-      zone,
-      address: profile.address,
-      config: configLabel(profile.configId),
-      situation: details.situation,
-      support: details.support,
-      estimate: estimateText(profile),
-    });
-    setStep('done');
+    setSending(true);
+    setError('');
+    try {
+      await submitContactRequest({
+        kind: 'QUOTE',
+        full_name: details.name,
+        email: details.email,
+        phone: details.phone,
+        zone_id: profile.zoneId,
+        zone_label: zone,
+        address: profile.address,
+        config_id: profile.configId,
+        config_label: configLabel(profile.configId),
+        situation: details.situation,
+        support: details.support,
+        preferred_slot: details.slot,
+        estimate_low: estimate?.monthlyLow ?? null,
+        estimate_high: estimate?.monthlyHigh ?? null,
+        consent: details.consent,
+      });
+      setStep('done');
+    } catch (e) {
+      setError(toUserMessage(e));
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -217,8 +227,7 @@ function EstimatorCard({ profile, setProfile }: { profile: Profile; setProfile: 
             <p className="result-disclaimer">Estimation indicative et non contractuelle, avant frais et commission.</p>
           </div>
 
-          {canContact ? (
-            <form onSubmit={submit}>
+          <form onSubmit={submit}>
               <div className="est-row">
                 <label>Situation actuelle
                   <select value={details.situation} onChange={setD('situation')}>
@@ -241,21 +250,21 @@ function EstimatorCard({ profile, setProfile }: { profile: Profile; setProfile: 
                 <input type="checkbox" required checked={details.consent} onChange={(e) => setDetails((d) => ({ ...d, consent: e.target.checked }))} />
                 <span>J’accepte que mes informations soient utilisées pour répondre à ma demande de devis.</span>
               </label>
-              <button type="submit" className="btn btn-gold btn-block">Recevoir mon devis <ArrowRight size={18} aria-hidden="true" /></button>
+              {error && <p className="form-error" role="alert">{error}</p>}
+              <button type="submit" className="btn btn-gold btn-block" disabled={sending}>
+                {sending ? 'Envoi en cours…' : 'Recevoir mon devis'} <ArrowRight size={18} aria-hidden="true" />
+              </button>
               <button type="button" className="estimator-link" onClick={() => setStep('place')}>Modifier mon bien</button>
             </form>
-          ) : (
-            <button type="button" className="estimator-link" onClick={() => setStep('place')}>Modifier mon bien</button>
-          )}
         </>
       )}
 
       {step === 'done' && (
         <div className="analysis done" role="status">
-          <div className="analysis-tag"><Check size={16} aria-hidden="true" /> Demande préparée</div>
-          <h2 id="estimator-title">Il ne reste qu’à envoyer le message.</h2>
+          <div className="analysis-tag"><Check size={16} aria-hidden="true" /> Demande reçue</div>
+          <h2 id="estimator-title">Votre demande est bien enregistrée.</h2>
           <p className="result-meta">
-            Votre application mail s’est ouverte avec votre demande de devis. Envoyez le message pour la transmettre à notre équipe.
+            Notre équipe vérifie votre bien, son quartier et les logements comparables, puis revient vers vous avec un devis adapté.
           </p>
           <a className="estimator-link" href="#methode">Découvrir notre méthode</a>
           <button type="button" className="estimator-link" onClick={() => { setStep('place'); setDetails(initialDetails); }}>Faire une autre estimation</button>
@@ -264,6 +273,64 @@ function EstimatorCard({ profile, setProfile }: { profile: Profile; setProfile: 
 
       <p className="estimator-foot">Gratuit · Sans engagement</p>
     </div>
+  );
+}
+
+function ContactForm() {
+  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '', consent: false });
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
+  const [error, setError] = useState('');
+  const set = (key: 'name' | 'email' | 'phone' | 'message') => (e: { target: { value: string } }) =>
+    setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    setStatus('sending');
+    setError('');
+    try {
+      await submitContactRequest({
+        kind: 'CONTACT',
+        full_name: form.name,
+        email: form.email,
+        phone: form.phone,
+        message: form.message,
+        consent: form.consent,
+      });
+      setStatus('sent');
+    } catch (e) {
+      setError(toUserMessage(e));
+      setStatus('idle');
+    }
+  }
+
+  if (status === 'sent') {
+    return (
+      <div className="contact-form contact-sent" role="status">
+        <span className="check"><Check size={14} aria-hidden="true" /></span>
+        <h3>Message envoyé</h3>
+        <p>Merci, nous revenons vers vous très vite.</p>
+        <button type="button" className="estimator-link" onClick={() => { setForm({ name: '', email: '', phone: '', message: '', consent: false }); setStatus('idle'); }}>Envoyer un autre message</button>
+      </div>
+    );
+  }
+
+  return (
+    <form className="contact-form" onSubmit={submit}>
+      <label>Prénom et nom<input required autoComplete="name" value={form.name} onChange={set('name')} /></label>
+      <div className="est-row">
+        <label>Email<input required type="email" autoComplete="email" value={form.email} onChange={set('email')} /></label>
+        <label>Téléphone (facultatif)<input type="tel" autoComplete="tel" value={form.phone} onChange={set('phone')} /></label>
+      </div>
+      <label>Votre message<textarea required rows={4} maxLength={2000} value={form.message} onChange={set('message')} /></label>
+      <label className="consent">
+        <input type="checkbox" required checked={form.consent} onChange={(e) => setForm((f) => ({ ...f, consent: e.target.checked }))} />
+        <span>J’accepte que mes informations soient utilisées pour répondre à ma demande.</span>
+      </label>
+      {error && <p className="form-error" role="alert">{error}</p>}
+      <button type="submit" className="btn btn-gold btn-block" disabled={status === 'sending'}>
+        {status === 'sending' ? 'Envoi en cours…' : 'Nous contacter'} <ArrowRight size={18} aria-hidden="true" />
+      </button>
+    </form>
   );
 }
 
@@ -279,11 +346,11 @@ export default function LandingPage() {
           <a href="#confiance">Pourquoi nous</a>
           <a href="#tarifs">Tarifs</a>
           <a href="#faq">FAQ</a>
-          {canContact && <a href="#contact">Contact</a>}
+          <a href="#contact">Contact</a>
         </nav>
         <div className="nav-actions">
           <ThemeToggle />
-          {canContact && <a className="btn btn-primary btn-sm" href="#estimateur">Estimer mes revenus</a>}
+          <a className="btn btn-primary btn-sm" href="#estimateur">Estimer mes revenus</a>
         </div>
       </header>
       <main>
@@ -406,9 +473,7 @@ export default function LandingPage() {
               {pricing.map((p) => (
                 <li key={p}><span className="check"><Check size={14} aria-hidden="true" /></span>{p}</li>
               ))}
-              {canContact && (
-                <li className="pricing-cta"><a className="btn btn-gold" href="#estimateur">Demander un devis <Tag size={16} aria-hidden="true" /></a></li>
-              )}
+              <li className="pricing-cta"><a className="btn btn-gold" href="#estimateur">Demander un devis <Tag size={16} aria-hidden="true" /></a></li>
             </ul>
           </div>
         </section>
@@ -430,19 +495,24 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {canContact && (
-          <section id="contact" className="closing contact">
-            <div className="eyebrow eyebrow-light">Votre devis</div>
-            <h2>Parlons de votre projet,<br /><span className="serif-em">simplement.</span></h2>
-            <div className="rule" />
-            <p>Faites votre estimation en deux minutes, ou écrivez-nous directement. Nous revenons vers vous avec un devis adapté, sans engagement.</p>
-            <ul className="contact-lines">
-              <li><Mail size={16} aria-hidden="true" /><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></li>
-              {CONTACT_PHONE && <li><Phone size={16} aria-hidden="true" /><a href={`tel:${CONTACT_PHONE.replace(/\s+/g, '')}`}>{CONTACT_PHONE}</a></li>}
-            </ul>
-            <a className="btn btn-gold btn-lg" href="#estimateur">Faire mon estimation <ArrowRight size={18} aria-hidden="true" /></a>
-          </section>
-        )}
+        <section id="contact" className="closing contact">
+          <div className="contact-inner">
+            <div className="contact-copy">
+              <div className="eyebrow eyebrow-light">Nous contacter</div>
+              <h2>Parlons de votre projet,<br /><span className="serif-em">simplement.</span></h2>
+              <div className="rule" />
+              <p>Une question, un projet, un bien à confier ? Écrivez-nous : nous revenons vers vous rapidement, sans engagement.</p>
+              {(CONTACT_EMAIL || CONTACT_PHONE) && (
+                <ul className="contact-lines">
+                  {CONTACT_EMAIL && <li><Mail size={16} aria-hidden="true" /><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></li>}
+                  {CONTACT_PHONE && <li><Phone size={16} aria-hidden="true" /><a href={`tel:${CONTACT_PHONE.replace(/\s+/g, '')}`}>{CONTACT_PHONE}</a></li>}
+                </ul>
+              )}
+              <a className="btn btn-ghost" href="#estimateur">Faire mon estimation <ArrowRight size={18} aria-hidden="true" /></a>
+            </div>
+            <ContactForm />
+          </div>
+        </section>
       </main>
       <footer className="site-footer">
         <div className="footer-inner">
@@ -456,7 +526,7 @@ export default function LandingPage() {
               <a href="#methode">Méthode</a>
               <a href="#tarifs">Tarifs</a>
               <a href="#faq">FAQ</a>
-              {canContact && <a href="#contact">Contact</a>}
+              <a href="#contact">Contact</a>
             </nav>
           </div>
           <div className="footer-bottom">

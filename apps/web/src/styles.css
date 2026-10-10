@@ -2118,3 +2118,10 @@ input {
     padding: 16px;
   }
 }
+
+/* Native dropdown menus follow the active theme in both modes. */
+select option,
+select optgroup {
+  background-color: var(--surface-flat);
+  color: var(--text);
+}

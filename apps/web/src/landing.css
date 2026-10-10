@@ -241,7 +241,7 @@ html {
 }
 
 .closing.contact {
-  text-align: center;
+  text-align: left;
 }
 
 .contact .rule {
@@ -428,9 +428,19 @@ html {
   color: rgb(255 255 255 / 0.35);
 }
 
+/* The card is dark in both themes: force a dark native menu with readable options. */
+.estimator select {
+  color-scheme: dark;
+}
+
 .estimator select option,
 .estimator select optgroup {
-  color: #000;
+  background-color: #0a1a2f;
+  color: #fff;
+}
+
+.estimator select option:disabled {
+  color: rgb(255 255 255 / 0.45);
 }
 
 .estimator input:focus,
@@ -634,4 +644,122 @@ html {
 
 .input-icon input {
   padding-left: 40px;
+}
+
+/* Contact section */
+.contact-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: clamp(32px, 6vw, 72px);
+  align-items: start;
+}
+
+.closing.contact .rule {
+  margin: 20px 0;
+}
+
+.closing.contact p {
+  margin: 0 0 28px;
+}
+
+.contact-lines {
+  justify-items: start;
+  margin-bottom: 28px;
+}
+
+.contact-form {
+  display: grid;
+  gap: 16px;
+  padding: 34px 32px;
+  background: linear-gradient(145deg, rgb(14 35 64 / 0.92), rgb(7 21 48 / 0.92));
+  border: 1px solid rgb(212 175 55 / 0.22);
+  box-shadow: 0 30px 80px rgb(0 0 0 / 0.4);
+  text-align: left;
+}
+
+.contact-form label {
+  display: grid;
+  gap: 8px;
+  font-size: 0.64rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--mist);
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 0.92rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #fff;
+  background: rgb(0 36 60 / 0.55);
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 0;
+  outline: none;
+  resize: vertical;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: var(--gold);
+}
+
+.contact-form label.consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.74rem;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.5;
+}
+
+.contact-form label.consent input {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: var(--gold);
+}
+
+.contact-sent {
+  justify-items: start;
+}
+
+.contact-sent h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.contact-sent p {
+  margin: 0;
+  color: var(--mist);
+}
+
+.form-error {
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #ffb4a8;
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-line);
+}
+
+@media (max-width: 960px) {
+  .contact-inner {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .contact-form {
+    padding: 26px 20px;
+  }
 }
