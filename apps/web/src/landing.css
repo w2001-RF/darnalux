@@ -1,0 +1,598 @@
+/* ==========================================================================
+   Landing — showcase sections (loaded with the landing page)
+   ========================================================================== */
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+.landing .section.section-tight {
+  padding-top: 0;
+}
+
+.landing .section {
+  scroll-margin-top: 78px;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(32px, 6vw, 80px);
+  align-items: center;
+}
+
+.split h2 {
+  margin-bottom: 28px;
+}
+
+.split-media {
+  position: relative;
+  min-height: 460px;
+  border: 1px solid var(--line-strong);
+  background:
+    linear-gradient(to top, rgb(6 16 30 / 0.55), transparent 55%),
+    url('./assets/rabat.jpg') 30% center / cover no-repeat,
+    var(--ink);
+  box-shadow: var(--shadow);
+}
+
+.split-media::after {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgb(212 175 55 / 0.35);
+  pointer-events: none;
+}
+
+.check-list,
+.pricing-list {
+  list-style: none;
+  display: grid;
+  gap: 14px;
+  padding: 0;
+  margin: 0;
+}
+
+.check-list li,
+.pricing-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-soft);
+}
+
+.check {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin-top: 1px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgb(212 175 55 / 0.4);
+  border-radius: 50%;
+  background: rgb(212 175 55 / 0.08);
+  color: var(--gold);
+}
+
+:root[data-theme='light'] .section .check {
+  color: var(--gold-d);
+}
+
+.lead-note {
+  margin-top: 30px;
+  padding-left: 18px;
+  border-left: 2px solid var(--gold);
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: var(--text-soft);
+}
+
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin-top: 56px;
+}
+
+.pillar ul {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  margin: 6px 0 0;
+}
+
+.pillar li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.pillar li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  transform: rotate(45deg);
+}
+
+.features.features-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.steps.method-steps {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.pricing {
+  padding: clamp(64px, 9vw, 100px) max(24px, 5%);
+  color: #fff;
+  background:
+    radial-gradient(ellipse 70% 80% at 0% 0%, rgb(0 76 122 / 0.28), transparent 60%),
+    linear-gradient(160deg, var(--night-1), var(--ink));
+  scroll-margin-top: 78px;
+}
+
+.pricing-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(32px, 6vw, 80px);
+  align-items: center;
+}
+
+.pricing h2 {
+  margin: 14px 0 18px;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.9vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.22;
+}
+
+.pricing p {
+  max-width: 480px;
+  color: var(--mist);
+  line-height: 1.85;
+}
+
+.pricing-list {
+  padding: 34px 32px;
+  border: 1px solid rgb(212 175 55 / 0.22);
+  background: rgb(0 25 45 / 0.5);
+}
+
+.pricing-list li {
+  color: rgb(255 255 255 / 0.85);
+}
+
+.pricing-cta {
+  margin-top: 8px;
+}
+
+.faq {
+  margin-top: 40px;
+  display: grid;
+  gap: 2px;
+}
+
+.faq details {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  transition: border-color 0.3s var(--ease);
+}
+
+.faq details[open] {
+  border-color: var(--line-strong);
+}
+
+.faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 26px;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq summary svg {
+  flex: none;
+  color: var(--gold);
+  transition: transform 0.3s var(--ease);
+}
+
+:root[data-theme='light'] .faq summary svg {
+  color: var(--gold-d);
+}
+
+.faq details[open] summary svg {
+  transform: rotate(180deg);
+}
+
+.faq details p {
+  max-width: 760px;
+  padding: 0 26px 24px;
+  font-size: 0.9rem;
+  line-height: 1.85;
+  color: var(--muted);
+}
+
+.closing.contact {
+  text-align: left;
+}
+
+.contact-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: clamp(32px, 6vw, 72px);
+  align-items: start;
+}
+
+.contact .rule {
+  margin: 20px 0;
+}
+
+.closing.contact p {
+  margin: 0 0 28px;
+}
+
+.contact-lines {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+}
+
+.contact-lines li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--gold);
+}
+
+.contact-lines a {
+  color: rgb(255 255 255 / 0.85);
+  text-decoration: none;
+}
+
+.contact-lines a:hover {
+  color: var(--gold);
+}
+
+.estimate-form {
+  display: grid;
+  gap: 16px;
+  padding: 34px 32px;
+  background: linear-gradient(145deg, rgb(14 35 64 / 0.92), rgb(7 21 48 / 0.92));
+  border: 1px solid rgb(212 175 55 / 0.22);
+  box-shadow: 0 30px 80px rgb(0 0 0 / 0.4);
+  text-align: left;
+}
+
+.estimate-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.estimate-form label {
+  display: grid;
+  gap: 8px;
+  font-size: 0.64rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--mist);
+}
+
+.estimate-form input,
+.estimate-form select,
+.estimate-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 0.92rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #fff;
+  background: rgb(0 36 60 / 0.55);
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 0;
+  outline: none;
+  resize: vertical;
+}
+
+.estimate-form select option {
+  color: #000;
+}
+
+.estimate-form input:focus,
+.estimate-form select:focus,
+.estimate-form textarea:focus {
+  border-color: var(--gold);
+}
+
+.closing.contact .form-note {
+  margin: 0;
+  max-width: none;
+  font-size: 0.74rem;
+  line-height: 1.6;
+  color: var(--mist);
+}
+
+.footer-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+}
+
+.footer-links a {
+  font-size: 0.68rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: inherit;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: var(--gold);
+}
+
+@media (max-width: 1100px) {
+  .features.features-4,
+  .steps.method-steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 960px) {
+  .split,
+  .pricing-inner,
+  .contact-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .split-media {
+    min-height: 280px;
+    order: -1;
+  }
+
+  .pillars {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .features.features-4,
+  .steps.method-steps,
+  .estimate-form .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .estimate-form {
+    padding: 26px 20px;
+  }
+
+  .faq summary {
+    padding: 18px;
+  }
+
+  .faq details p {
+    padding: 0 18px 20px;
+  }
+}
+
+/* Estimator card (hero) */
+.estimator {
+  display: grid;
+  gap: 14px;
+  padding: 30px 28px;
+}
+
+.estimator h2 {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #fff;
+}
+
+.estimator-sub {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  color: var(--mist);
+}
+
+.stepper {
+  display: flex;
+  gap: 18px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stepper li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.58rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--mist);
+}
+
+.stepper b {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 50%;
+  font-size: 0.7rem;
+}
+
+.stepper li.active {
+  color: var(--gold);
+}
+
+.stepper li.active b,
+.stepper li.done b {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.estimator form {
+  display: grid;
+  gap: 14px;
+}
+
+.estimator label {
+  display: grid;
+  gap: 7px;
+  font-size: 0.62rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--mist);
+}
+
+.estimator input,
+.estimator select {
+  width: 100%;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 0.9rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #fff;
+  background: rgb(0 36 60 / 0.55);
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 0;
+  outline: none;
+}
+
+.estimator input::placeholder {
+  color: rgb(255 255 255 / 0.35);
+}
+
+.estimator select option,
+.estimator select optgroup {
+  color: #000;
+}
+
+.estimator input:focus,
+.estimator select:focus {
+  border-color: var(--gold);
+}
+
+.estimator-link {
+  justify-self: center;
+  padding: 4px;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: 0.74rem;
+  color: var(--mist);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.estimator-link:hover {
+  color: var(--gold);
+}
+
+.estimator-result {
+  display: grid;
+  gap: 12px;
+}
+
+.result-label {
+  font-size: 0.62rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.result-range {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 3.2vw, 2.3rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--gold);
+}
+
+.result-range small {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  color: var(--mist);
+}
+
+.result-meta,
+.result-disclaimer {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.7;
+  color: rgb(255 255 255 / 0.78);
+}
+
+.result-disclaimer {
+  font-size: 0.7rem;
+  color: var(--mist);
+}
+
+.estimator-foot {
+  margin: 0;
+  text-align: center;
+  font-size: 0.68rem;
+  letter-spacing: 1px;
+  color: var(--mist);
+}
+
+@media (max-width: 600px) {
+  .estimator {
+    padding: 24px 20px;
+  }
+
+  .stepper span {
+    display: none;
+  }
+
+  .stepper li.active span {
+    display: inline;
+  }
+}

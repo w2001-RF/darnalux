@@ -21,18 +21,6 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      # The repo is pinned to the internal Orange npm proxy, which GitHub-hosted
-      # runners cannot reach. For this CI job only, point the runner's copy of
-      # the lockfile and .npmrc at the public registry. Integrity hashes are
-      # unchanged, so tarballs are still verified. Files in the repo are not modified.
-      - name: Use public npm registry (CI only)
-        run: |
-          sed -i 's#https://repos.tech.orange:443/artifactory/api/npm/npmproxy/#https://registry.npmjs.org/#g' pnpm-lock.yaml
-          echo 'registry=https://registry.npmjs.org/' > .npmrc
-          if grep -q 'repos.tech.orange' pnpm-lock.yaml; then
-            echo 'Lockfile still references the internal registry' >&2
-            exit 1
-          fi
       # Web + core only: skips Expo / React Native from apps/mobile.
       - run: pnpm install --frozen-lockfile --filter "@darnalux/web..."
       - run: pnpm --filter @darnalux/core test
@@ -41,6 +29,8 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_CONTACT_EMAIL: ${{ vars.VITE_CONTACT_EMAIL }}
+          VITE_CONTACT_PHONE: ${{ vars.VITE_CONTACT_PHONE }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: apps/web/dist
