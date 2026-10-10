@@ -38,6 +38,7 @@ const FinancePage = lazy(() => import('./app/finance/FinancePage'));
 const DocumentsPage = lazy(() => import('./app/documents/DocumentsPage'));
 const MarketingPage = lazy(() => import('./app/marketing/MarketingPage'));
 const CampaignDetailPage = lazy(() => import('./app/marketing/CampaignDetailPage'));
+const LeadsPage = lazy(() => import('./app/leads/LeadsPage'));
 const ReportsPage = lazy(() => import('./app/reports/ReportsPage'));
 const ImportPage = lazy(() => import('./app/import/ImportPage'));
 const NotificationsPage = lazy(() => import('./app/notifications/NotificationsPage'));
@@ -103,6 +104,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="documents" element={<DocumentsPage />} />
             <Route path="marketing" element={<MarketingPage />} />
             <Route path="marketing/:id" element={<CampaignDetailPage />} />
+            <Route path="leads" element={<LeadsPage />} />
             <Route path="reports" element={<ReportsPage />} />
             <Route path="import" element={<ImportPage />} />
             <Route path="notifications" element={<NotificationsPage />} />
