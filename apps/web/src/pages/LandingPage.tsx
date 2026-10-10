@@ -13,6 +13,7 @@ import {
   LineChart,
   Mail,
   MapPin,
+  Search,
   Phone,
   Sparkles,
   Tag,
@@ -23,15 +24,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { Brand } from '../components/Brand';
 import { ThemeToggle } from '../components/ThemeToggle';
-import {
-  ESTIMATE_ZONES,
-  PROPERTY_KINDS,
-  PROPERTY_KIND_LABELS,
-  STANDINGS,
-  STANDING_LABELS,
-  estimateRevenue,
-} from '@darnalux/core';
-import type { PropertyKind, Standing } from '@darnalux/core';
+import { ESTIMATE_ZONES, PROPERTY_CONFIGS, estimateRevenue } from '@darnalux/core';
 import { CONTACT_EMAIL, CONTACT_PHONE, buildQuoteMailto } from '../lib/contact';
 import '../landing.css';
 
@@ -106,191 +99,171 @@ const faqs = [
 interface Profile {
   zoneId: string;
   address: string;
-  kind: PropertyKind;
-  bedrooms: number;
-  standing: Standing;
+  configId: string;
 }
 
 type SetProfile = (update: (p: Profile) => Profile) => void;
 
-const initialProfile: Profile = { zoneId: '', address: '', kind: 'APARTMENT', bedrooms: 1, standing: 'COMFORT' };
+const initialProfile: Profile = { zoneId: '', address: '', configId: '' };
 
-const BEDROOM_OPTIONS = [1, 2, 3, 4];
-const bedroomLabel = (n: number) => (n >= 4 ? '4 chambres ou plus' : n === 1 ? '1 chambre' : `${n} chambres`);
+const SITUATIONS = ['Déjà en location courte durée', 'Location longue durée', 'Vacant ou non utilisé', 'Usage personnel', 'À confirmer'];
+const SUPPORTS = ['Gestion essentielle', 'Gestion complète', 'Je souhaite être conseillé'];
+
 const mad = new Intl.NumberFormat('fr-FR');
-const zoneGroups = [...new Set(ESTIMATE_ZONES.map((z) => z.group))];
 const zoneLabel = (id: string) => ESTIMATE_ZONES.find((z) => z.id === id)?.label ?? '';
-
-function estimateOf(p: Profile) {
-  return estimateRevenue({ kind: p.kind, zoneId: p.zoneId, bedrooms: p.kind === 'STUDIO' ? 0 : p.bedrooms, standing: p.standing });
-}
+const configLabel = (id: string) => PROPERTY_CONFIGS.find((c) => c.id === id)?.label ?? '';
 
 function estimateText(p: Profile): string {
-  const e = estimateOf(p);
+  const e = estimateRevenue({ zoneId: p.zoneId, configId: p.configId });
   return e ? `${mad.format(e.monthlyLow)} – ${mad.format(e.monthlyHigh)} MAD / mois (brut, indicatif)` : '';
 }
 
-function ZoneSelect({ value, onChange }: { value: string; onChange: (id: string) => void }) {
-  return (
-    <select required value={value} onChange={(e) => onChange(e.target.value)}>
-      <option value="" disabled>Sélectionnez une zone</option>
-      {zoneGroups.map((g) => (
-        <optgroup key={g} label={g}>
-          {ESTIMATE_ZONES.filter((z) => z.group === g).map((z) => <option key={z.id} value={z.id}>{z.label}</option>)}
-        </optgroup>
-      ))}
-    </select>
-  );
-}
+type Step = 'place' | 'analysis' | 'done';
 
-function KindSelect({ value, onChange }: { value: PropertyKind; onChange: (k: PropertyKind) => void }) {
-  return (
-    <select value={value} onChange={(e) => onChange(e.target.value as PropertyKind)}>
-      {PROPERTY_KINDS.map((k) => <option key={k} value={k}>{PROPERTY_KIND_LABELS[k]}</option>)}
-    </select>
-  );
-}
-
-function StandingSelect({ value, onChange }: { value: Standing; onChange: (s: Standing) => void }) {
-  return (
-    <select value={value} onChange={(e) => onChange(e.target.value as Standing)}>
-      {STANDINGS.map((s) => <option key={s} value={s}>{STANDING_LABELS[s]}</option>)}
-    </select>
-  );
-}
-
-function BedroomSelect({ value, onChange }: { value: number; onChange: (n: number) => void }) {
-  return (
-    <select value={value} onChange={(e) => onChange(Number(e.target.value))}>
-      {BEDROOM_OPTIONS.map((n) => <option key={n} value={n}>{bedroomLabel(n)}</option>)}
-    </select>
-  );
-}
-
-type Step = 'place' | 'details' | 'result';
+const initialDetails = { situation: 'À confirmer', support: 'Je souhaite être conseillé', name: '', email: '', phone: '', slot: '', consent: false };
 
 function EstimatorCard({ profile, setProfile }: { profile: Profile; setProfile: SetProfile }) {
   const [step, setStep] = useState<Step>('place');
+  const [details, setDetails] = useState(initialDetails);
   const patch = (changes: Partial<Profile>) => setProfile((p) => ({ ...p, ...changes }));
-  const stepIndex = step === 'place' ? 1 : step === 'details' ? 2 : 3;
-  const estimate = step === 'result' ? estimateOf(profile) : null;
+  const setD = (key: 'situation' | 'support' | 'name' | 'email' | 'phone' | 'slot') => (e: { target: { value: string } }) =>
+    setDetails((d) => ({ ...d, [key]: e.target.value }));
+  const stepIndex = step === 'place' ? 1 : 2;
+  const estimate = estimateRevenue({ zoneId: profile.zoneId, configId: profile.configId });
+  const zone = zoneLabel(profile.zoneId);
 
-  function next(event: FormEvent, to: Step) {
+  function toAnalysis(event: FormEvent) {
     event.preventDefault();
-    setStep(to);
+    setStep('analysis');
+  }
+
+  function submit(event: FormEvent) {
+    event.preventDefault();
+    window.location.href = buildQuoteMailto(CONTACT_EMAIL, {
+      name: details.name,
+      email: details.email,
+      phone: details.phone,
+      slot: details.slot,
+      zone,
+      address: profile.address,
+      config: configLabel(profile.configId),
+      situation: details.situation,
+      support: details.support,
+      estimate: estimateText(profile),
+    });
+    setStep('done');
   }
 
   return (
-    <div className="hero-card estimator" aria-labelledby="estimator-title">
-      <ol className="stepper" aria-label={`Étape ${stepIndex} sur 3`}>
-        {['Votre bien', 'Détails', 'Estimation'].map((label, i) => (
-          <li key={label} className={i + 1 === stepIndex ? 'active' : i + 1 < stepIndex ? 'done' : ''}>
-            <b>{i + 1}</b><span>{label}</span>
-          </li>
-        ))}
-      </ol>
-      <h2 id="estimator-title">Combien pourriez-vous gagner ?</h2>
-      <p className="estimator-sub">Estimation gratuite en moins de 2 minutes</p>
+    <div id="estimateur" className="hero-card estimator" aria-labelledby="estimator-title">
+      {step === 'analysis' && (
+        <ol className="stepper" aria-label={`Étape ${stepIndex} sur 2`}>
+          <li className={stepIndex === 1 ? 'active' : 'done'}><b>1</b><span>Votre bien</span></li>
+          <li className={stepIndex === 2 ? 'active' : ''}><b>2</b><span>Votre analyse</span></li>
+        </ol>
+      )}
 
       {step === 'place' && (
-        <form onSubmit={(e) => next(e, 'details')}>
-          <label>Zone<ZoneSelect value={profile.zoneId} onChange={(zoneId) => patch({ zoneId })} /></label>
-          <label>Adresse ou quartier
-            <input required autoComplete="street-address" placeholder="Ex. rue, résidence, quartier…" value={profile.address} onChange={(e) => patch({ address: e.target.value })} />
-          </label>
-          <label>Configuration<KindSelect value={profile.kind} onChange={(kind) => patch({ kind })} /></label>
-          <button type="submit" className="btn btn-gold btn-block">Continuer <ArrowRight size={18} aria-hidden="true" /></button>
-        </form>
+        <>
+          <h2 id="estimator-title">Combien pourriez-vous gagner ?</h2>
+          <p className="estimator-sub">Estimation gratuite en moins de 2 minutes</p>
+          <form onSubmit={toAnalysis}>
+            <label>Zone
+              <select required value={profile.zoneId} onChange={(e) => patch({ zoneId: e.target.value })}>
+                <option value="" disabled>Sélectionnez une zone</option>
+                {ESTIMATE_ZONES.map((z) => <option key={z.id} value={z.id}>{z.label}</option>)}
+              </select>
+            </label>
+            <label>Adresse ou quartier
+              <span className="input-icon"><Search size={16} aria-hidden="true" /><input required autoComplete="street-address" placeholder="Tapez votre adresse ou quartier…" value={profile.address} onChange={(e) => patch({ address: e.target.value })} /></span>
+            </label>
+            <label>Configuration
+              <select required value={profile.configId} onChange={(e) => patch({ configId: e.target.value })}>
+                <option value="" disabled>Studio, appartement ou villa</option>
+                {PROPERTY_CONFIGS.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+              </select>
+            </label>
+            <button type="submit" className="btn btn-gold btn-block">Voir mon estimation <ArrowRight size={18} aria-hidden="true" /></button>
+          </form>
+        </>
       )}
 
-      {step === 'details' && (
-        <form onSubmit={(e) => next(e, 'result')}>
-          {profile.kind !== 'STUDIO' && (
-            <label>Nombre de chambres<BedroomSelect value={profile.bedrooms} onChange={(bedrooms) => patch({ bedrooms })} /></label>
-          )}
-          <label>Standing du logement<StandingSelect value={profile.standing} onChange={(standing) => patch({ standing })} /></label>
-          <button type="submit" className="btn btn-gold btn-block">Voir mon estimation <ArrowRight size={18} aria-hidden="true" /></button>
-          <button type="button" className="estimator-link" onClick={() => setStep('place')}>Modifier mon bien</button>
-        </form>
-      )}
+      {step === 'analysis' && (
+        <>
+          <div className="analysis" role="status">
+            <div className="analysis-tag"><LineChart size={16} aria-hidden="true" /> Première lecture</div>
+            {estimate ? (
+              <>
+                <h2 id="estimator-title">Analyse locale disponible à {zone}</h2>
+                <div className="result-range">{mad.format(estimate.monthlyLow)} – {mad.format(estimate.monthlyHigh)} <small>MAD / mois</small></div>
+                <p className="result-meta">
+                  {configLabel(profile.configId)} · {profile.address}
+                  <br />Revenu brut indicatif : {mad.format(estimate.nightlyLow)} – {mad.format(estimate.nightlyHigh)} MAD par nuit, pour une occupation de {Math.round(estimate.occupancyLow * 100)} % à {Math.round(estimate.occupancyHigh * 100)} %.
+                </p>
+              </>
+            ) : (
+              <>
+                <h2 id="estimator-title">Analyse à confirmer{zone ? ` · ${zone}` : ''}</h2>
+                <p className="result-meta">
+                  {configLabel(profile.configId)} · {profile.address}. Pour éviter une promesse artificielle, la fourchette de revenus sera validée par notre équipe avec les caractéristiques réelles du bien.
+                </p>
+              </>
+            )}
+            <ul className="analysis-list">
+              <li>Revenu brut potentiel</li>
+              <li>Prix de départ conseillé</li>
+              <li>Actions à prévoir avant la mise en ligne</li>
+            </ul>
+            <p className="result-disclaimer">Estimation indicative et non contractuelle, avant frais et commission.</p>
+          </div>
 
-      {step === 'result' && (
-        <div className="estimator-result" role="status">
-          {estimate ? (
-            <>
-              <div className="result-label">Revenu mensuel brut estimé</div>
-              <div className="result-range">{mad.format(estimate.monthlyLow)} – {mad.format(estimate.monthlyHigh)} <small>MAD</small></div>
-              <p className="result-meta">
-                {PROPERTY_KIND_LABELS[profile.kind]}{profile.kind !== 'STUDIO' ? ` · ${bedroomLabel(profile.bedrooms)}` : ''} · {zoneLabel(profile.zoneId)}
-                <br />Soit {mad.format(estimate.nightlyLow)} – {mad.format(estimate.nightlyHigh)} MAD par nuit, pour un taux d’occupation de {Math.round(estimate.occupancyLow * 100)} % à {Math.round(estimate.occupancyHigh * 100)} %.
-              </p>
-            </>
+          {canContact ? (
+            <form onSubmit={submit}>
+              <div className="est-row">
+                <label>Situation actuelle
+                  <select value={details.situation} onChange={setD('situation')}>
+                    {SITUATIONS.map((s) => <option key={s}>{s}</option>)}
+                  </select>
+                </label>
+                <label>Accompagnement recherché
+                  <select value={details.support} onChange={setD('support')}>
+                    {SUPPORTS.map((s) => <option key={s}>{s}</option>)}
+                  </select>
+                </label>
+              </div>
+              <label>Prénom et nom<input required autoComplete="name" value={details.name} onChange={setD('name')} /></label>
+              <div className="est-row">
+                <label>Email<input required type="email" autoComplete="email" value={details.email} onChange={setD('email')} /></label>
+                <label>Téléphone<input required type="tel" autoComplete="tel" value={details.phone} onChange={setD('phone')} /></label>
+              </div>
+              <label>Créneau souhaité<input placeholder="Ex. mardi matin" value={details.slot} onChange={setD('slot')} /></label>
+              <label className="consent">
+                <input type="checkbox" required checked={details.consent} onChange={(e) => setDetails((d) => ({ ...d, consent: e.target.checked }))} />
+                <span>J’accepte que mes informations soient utilisées pour répondre à ma demande de devis.</span>
+              </label>
+              <button type="submit" className="btn btn-gold btn-block">Recevoir mon devis <ArrowRight size={18} aria-hidden="true" /></button>
+              <button type="button" className="estimator-link" onClick={() => setStep('place')}>Modifier mon bien</button>
+            </form>
           ) : (
-            <>
-              <div className="result-label">Zone à analyser</div>
-              <p className="result-meta">Votre zone demande une analyse sur mesure : nous préparons une estimation personnalisée avec votre devis.</p>
-            </>
+            <button type="button" className="estimator-link" onClick={() => setStep('place')}>Modifier mon bien</button>
           )}
-          <p className="result-disclaimer">Estimation indicative et non contractuelle, avant frais et commission. Le devis l’affine selon votre bien.</p>
-          {canContact && <a className="btn btn-gold btn-block" href="#devis">Obtenir mon devis <ArrowRight size={18} aria-hidden="true" /></a>}
-          <button type="button" className="estimator-link" onClick={() => setStep('place')}>Refaire une estimation</button>
+        </>
+      )}
+
+      {step === 'done' && (
+        <div className="analysis done" role="status">
+          <div className="analysis-tag"><Check size={16} aria-hidden="true" /> Demande préparée</div>
+          <h2 id="estimator-title">Il ne reste qu’à envoyer le message.</h2>
+          <p className="result-meta">
+            Votre application mail s’est ouverte avec votre demande de devis. Envoyez le message pour la transmettre à notre équipe.
+          </p>
+          <a className="estimator-link" href="#methode">Découvrir notre méthode</a>
+          <button type="button" className="estimator-link" onClick={() => { setStep('place'); setDetails(initialDetails); }}>Faire une autre estimation</button>
         </div>
       )}
 
       <p className="estimator-foot">Gratuit · Sans engagement</p>
     </div>
-  );
-}
-
-function QuoteForm({ profile, setProfile }: { profile: Profile; setProfile: SetProfile }) {
-  const [person, setPerson] = useState({ firstName: '', lastName: '', email: '', phone: '', message: '' });
-  const [sent, setSent] = useState(false);
-  const setP = (key: keyof typeof person) => (e: { target: { value: string } }) => setPerson((f) => ({ ...f, [key]: e.target.value }));
-  const patch = (changes: Partial<Profile>) => setProfile((p) => ({ ...p, ...changes }));
-
-  function submit(event: FormEvent) {
-    event.preventDefault();
-    window.location.href = buildQuoteMailto(CONTACT_EMAIL, {
-      ...person,
-      zone: zoneLabel(profile.zoneId),
-      address: profile.address,
-      propertyType: PROPERTY_KIND_LABELS[profile.kind],
-      bedrooms: profile.kind === 'STUDIO' ? 'Studio' : bedroomLabel(profile.bedrooms),
-      standing: STANDING_LABELS[profile.standing],
-      estimate: estimateText(profile),
-    });
-    setSent(true);
-  }
-
-  return (
-    <form className="estimate-form" onSubmit={submit}>
-      <div className="form-row">
-        <label>Prénom<input required autoComplete="given-name" value={person.firstName} onChange={setP('firstName')} /></label>
-        <label>Nom<input required autoComplete="family-name" value={person.lastName} onChange={setP('lastName')} /></label>
-      </div>
-      <div className="form-row">
-        <label>Email<input required type="email" autoComplete="email" value={person.email} onChange={setP('email')} /></label>
-        <label>Téléphone<input required type="tel" autoComplete="tel" value={person.phone} onChange={setP('phone')} /></label>
-      </div>
-      <div className="form-row">
-        <label>Zone<ZoneSelect value={profile.zoneId} onChange={(zoneId) => patch({ zoneId })} /></label>
-        <label>Adresse ou quartier<input required value={profile.address} onChange={(e) => patch({ address: e.target.value })} /></label>
-      </div>
-      <div className="form-row">
-        <label>Configuration<KindSelect value={profile.kind} onChange={(kind) => patch({ kind })} /></label>
-        {profile.kind !== 'STUDIO' && (
-          <label>Chambres<BedroomSelect value={profile.bedrooms} onChange={(bedrooms) => patch({ bedrooms })} /></label>
-        )}
-      </div>
-      <label>Standing<StandingSelect value={profile.standing} onChange={(standing) => patch({ standing })} /></label>
-      <label>Message (facultatif)<textarea rows={3} value={person.message} onChange={setP('message')} /></label>
-      <button type="submit" className="btn btn-gold btn-lg">Demander mon devis <ArrowRight size={18} aria-hidden="true" /></button>
-      <p className="form-note" role="status">
-        {sent
-          ? 'Votre application mail s’est ouverte avec votre demande. Envoyez le message pour la transmettre.'
-          : 'Votre application mail s’ouvrira avec votre demande préremplie.'}
-      </p>
-    </form>
   );
 }
 
@@ -306,29 +279,23 @@ export default function LandingPage() {
           <a href="#confiance">Pourquoi nous</a>
           <a href="#tarifs">Tarifs</a>
           <a href="#faq">FAQ</a>
-          {canContact && <a href="#devis">Contact</a>}
+          {canContact && <a href="#contact">Contact</a>}
         </nav>
         <div className="nav-actions">
           <ThemeToggle />
-          {canContact && <a className="btn btn-primary btn-sm" href="#devis">Devis gratuit</a>}
+          {canContact && <a className="btn btn-primary btn-sm" href="#estimateur">Estimer mes revenus</a>}
         </div>
       </header>
       <main>
         <section className="hero">
           <div className="hero-inner">
             <div className="hero-copy">
-              <div className="eyebrow">Gestion locative &amp; conciergerie</div>
-              <h1>Votre bien, géré avec soin.<br /><span className="serif-em">Vos revenus, pilotés avec clarté.</span></h1>
+              <div className="eyebrow">Acquisition propriétaires</div>
+              <h1>Faites rapporter<br /><span className="serif-em">davantage</span> à votre bien<br />au Maroc</h1>
               <p className="hero-lead">
-                DarnaLux prend en charge la location courte durée de votre bien, de la mise en ligne au check-out, avec un suivi transparent à chaque étape.
+                Gestion Airbnb et location courte durée professionnelle : nous nous occupons de tout, vous encaissez les revenus.
               </p>
-              <div className="hero-actions">
-                <a className="btn btn-primary btn-lg" href={canContact ? '#devis' : '#services'}>
-                  {canContact ? 'Demander un devis' : 'Découvrir nos services'} <ArrowRight size={18} aria-hidden="true" />
-                </a>
-                <a className="btn btn-ghost btn-lg" href="#methode">Notre méthode</a>
-              </div>
-              <div className="trust">Une conciergerie pensée pour les propriétaires exigeants</div>
+              <div className="hero-note">Estimation gratuite · Sans engagement · Conciergerie DarnaLux</div>
             </div>
             <EstimatorCard profile={profile} setProfile={setProfile} />
           </div>
@@ -440,7 +407,7 @@ export default function LandingPage() {
                 <li key={p}><span className="check"><Check size={14} aria-hidden="true" /></span>{p}</li>
               ))}
               {canContact && (
-                <li className="pricing-cta"><a className="btn btn-gold" href="#devis">Demander un devis <Tag size={16} aria-hidden="true" /></a></li>
+                <li className="pricing-cta"><a className="btn btn-gold" href="#estimateur">Demander un devis <Tag size={16} aria-hidden="true" /></a></li>
               )}
             </ul>
           </div>
@@ -464,20 +431,16 @@ export default function LandingPage() {
         </section>
 
         {canContact && (
-          <section id="devis" className="closing contact">
-            <div className="contact-inner">
-              <div className="contact-copy">
-                <div className="eyebrow eyebrow-light">Votre devis</div>
-                <h2>Recevez votre devis<br /><span className="serif-em">personnalisé.</span></h2>
-                <div className="rule" />
-                <p>Confirmez les informations de votre bien. Nous revenons vers vous avec un devis adapté, sans engagement.</p>
-                <ul className="contact-lines">
-                  <li><Mail size={16} aria-hidden="true" /><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></li>
-                  {CONTACT_PHONE && <li><Phone size={16} aria-hidden="true" /><a href={`tel:${CONTACT_PHONE.replace(/\s+/g, '')}`}>{CONTACT_PHONE}</a></li>}
-                </ul>
-              </div>
-              <QuoteForm profile={profile} setProfile={setProfile} />
-            </div>
+          <section id="contact" className="closing contact">
+            <div className="eyebrow eyebrow-light">Votre devis</div>
+            <h2>Parlons de votre projet,<br /><span className="serif-em">simplement.</span></h2>
+            <div className="rule" />
+            <p>Faites votre estimation en deux minutes, ou écrivez-nous directement. Nous revenons vers vous avec un devis adapté, sans engagement.</p>
+            <ul className="contact-lines">
+              <li><Mail size={16} aria-hidden="true" /><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></li>
+              {CONTACT_PHONE && <li><Phone size={16} aria-hidden="true" /><a href={`tel:${CONTACT_PHONE.replace(/\s+/g, '')}`}>{CONTACT_PHONE}</a></li>}
+            </ul>
+            <a className="btn btn-gold btn-lg" href="#estimateur">Faire mon estimation <ArrowRight size={18} aria-hidden="true" /></a>
           </section>
         )}
       </main>
@@ -493,7 +456,7 @@ export default function LandingPage() {
               <a href="#methode">Méthode</a>
               <a href="#tarifs">Tarifs</a>
               <a href="#faq">FAQ</a>
-              {canContact && <a href="#devis">Contact</a>}
+              {canContact && <a href="#contact">Contact</a>}
             </nav>
           </div>
           <div className="footer-bottom">

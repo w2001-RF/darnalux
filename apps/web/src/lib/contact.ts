@@ -3,36 +3,35 @@ export const CONTACT_EMAIL: string = (import.meta.env.VITE_CONTACT_EMAIL ?? '').
 export const CONTACT_PHONE: string = (import.meta.env.VITE_CONTACT_PHONE ?? '').trim();
 
 export interface QuoteRequest {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   phone: string;
+  slot: string;
   zone: string;
   address: string;
-  propertyType: string;
-  bedrooms: string;
-  standing: string;
-  /** Human-readable estimate shown to the visitor, if any. */
+  config: string;
+  situation: string;
+  support: string;
+  /** Human-readable indicative estimate shown to the visitor, if any. */
   estimate: string;
-  message: string;
 }
 
 export function buildQuoteMailto(to: string, r: QuoteRequest): string {
   const lines = [
     'Demande de devis',
     '',
-    `Nom : ${r.firstName} ${r.lastName}`,
+    `Nom : ${r.name}`,
     `Email : ${r.email}`,
     `Téléphone : ${r.phone}`,
+    `Créneau souhaité : ${r.slot || 'non précisé'}`,
     '',
     `Zone : ${r.zone}`,
-    `Adresse : ${r.address || 'non précisée'}`,
-    `Type de bien : ${r.propertyType}`,
-    `Chambres : ${r.bedrooms}`,
-    `Standing : ${r.standing}`,
+    `Adresse : ${r.address}`,
+    `Configuration : ${r.config}`,
+    `Situation actuelle : ${r.situation}`,
+    `Accompagnement recherché : ${r.support}`,
   ];
   if (r.estimate) lines.push('', `Estimation indicative affichée : ${r.estimate}`);
-  if (r.message) lines.push('', 'Message :', r.message);
-  const subject = encodeURIComponent(`Demande de devis — ${r.firstName} ${r.lastName}`);
+  const subject = encodeURIComponent(`Demande de devis — ${r.name}`);
   return `mailto:${to}?subject=${subject}&body=${encodeURIComponent(lines.join('\n'))}`;
 }
