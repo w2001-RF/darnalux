@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -10,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { AuthError } from '@darnalux/core';
+import { Screen } from '../../src/components/Screen';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import { spacing, useTheme } from '../../src/theme';
 
@@ -43,10 +43,10 @@ export default function LoginScreen() {
   const inputStyle = [styles.input, { borderColor: theme.border, color: theme.text, backgroundColor: theme.surface }];
 
   return (
-    <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: theme.background }]}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
+    // Edge-to-edge (always on from Android 16) no longer resizes the window for the keyboard,
+    // so padding is needed on Android as well as iOS.
+    <KeyboardAvoidingView style={styles.fill} behavior="padding">
+      <Screen centered insetTop insetBottom>
       <View style={styles.form}>
         <Text style={[styles.title, { color: theme.text }]}>DarnaLux</Text>
         <Text style={[styles.subtitle, { color: theme.muted }]}>Connectez-vous à votre espace</Text>
@@ -87,12 +87,13 @@ export default function LoginScreen() {
           )}
         </Pressable>
       </View>
+      </Screen>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: spacing.lg },
+  fill: { flex: 1 },
   form: { gap: spacing.md },
   title: { fontSize: 32, fontWeight: '700' },
   subtitle: { fontSize: 16, marginBottom: spacing.md },

@@ -1,0 +1,87 @@
+{
+  "name": "@darnalux/data",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "default": "./dist/client.js"
+    },
+    "./errors": {
+      "types": "./dist/errors.d.ts",
+      "default": "./dist/errors.js"
+    },
+    "./storage": {
+      "types": "./dist/storage.d.ts",
+      "default": "./dist/storage.js"
+    },
+    "./dashboard": {
+      "types": "./dist/dashboard.d.ts",
+      "default": "./dist/dashboard.js"
+    },
+    "./reservations": {
+      "types": "./dist/reservations.d.ts",
+      "default": "./dist/reservations.js"
+    },
+    "./tasks": {
+      "types": "./dist/tasks.d.ts",
+      "default": "./dist/tasks.js"
+    },
+    "./owners": {
+      "types": "./dist/owners.d.ts",
+      "default": "./dist/owners.js"
+    },
+    "./guests": {
+      "types": "./dist/guests.d.ts",
+      "default": "./dist/guests.js"
+    },
+    "./finance": {
+      "types": "./dist/finance.d.ts",
+      "default": "./dist/finance.js"
+    },
+    "./notifications": {
+      "types": "./dist/notifications.d.ts",
+      "default": "./dist/notifications.js"
+    },
+    "./support": {
+      "types": "./dist/support.d.ts",
+      "default": "./dist/support.js"
+    },
+    "./leads": {
+      "types": "./dist/leads.d.ts",
+      "default": "./dist/leads.js"
+    },
+    "./marketing": {
+      "types": "./dist/marketing.d.ts",
+      "default": "./dist/marketing.js"
+    },
+    "./search": {
+      "types": "./dist/search.d.ts",
+      "default": "./dist/search.js"
+    },
+    "./properties": {
+      "types": "./dist/properties.d.ts",
+      "default": "./dist/properties.js"
+    },
+    "./checkins": {
+      "types": "./dist/checkins.d.ts",
+      "default": "./dist/checkins.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc --declaration --outDir dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@darnalux/core": "workspace:*",
+    "@supabase/supabase-js": "^2.57.4"
+  }
+}

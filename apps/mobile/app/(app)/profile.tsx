@@ -1,4 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Stack } from 'expo-router';
+import { Screen } from '../../src/components/Screen';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import { spacing, useTheme } from '../../src/theme';
 
@@ -19,7 +21,8 @@ export default function ProfileScreen() {
   const fullName = [profile?.firstName, profile?.lastName].filter(Boolean).join(' ');
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <Screen insetBottom contentStyle={styles.container}>
+      <Stack.Screen options={{ title: 'Mon profil' }} />
       <Row label="Nom" value={fullName || '—'} />
       <Row label="Email" value={user?.email ?? '—'} />
       <Row label="Téléphone" value={profile?.phone ?? '—'} />
@@ -32,12 +35,12 @@ export default function ProfileScreen() {
       >
         <Text style={{ color: theme.danger, fontWeight: '600' }}>Se déconnecter</Text>
       </Pressable>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: spacing.lg, gap: spacing.sm },
+  container: { gap: spacing.sm },
   row: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1 },
   button: { marginTop: spacing.lg, borderWidth: 1, borderRadius: 10, paddingVertical: 14, alignItems: 'center' },
 });

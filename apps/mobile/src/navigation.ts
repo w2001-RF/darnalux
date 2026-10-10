@@ -1,0 +1,27 @@
+// Maps the shared menu (NAV_SECTIONS in @darnalux/core) to mobile routes.
+// `null` means the module is not available in the mobile app yet.
+export const MOBILE_ROUTES: Record<string, string | null> = {
+  dashboard: '/dashboard',
+  properties: '/properties',
+  reservations: '/reservations',
+  calendar: '/calendar',
+  guests: '/guests',
+  tasks: '/tasks',
+  checkins: '/checkins',
+  blacklist: '/guests?blacklist=1',
+  owners: '/owners',
+  finance: '/finance',
+  marketing: '/marketing',
+  leads: '/leads',
+  notifications: '/notifications',
+  support: '/support',
+  portal: null,
+  documents: null,
+  reports: null,
+  import: null,
+  contracts: null,
+  'verification-settings': null,
+  users: null,
+  roles: null,
+  audit: null,
+};

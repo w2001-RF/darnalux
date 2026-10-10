@@ -14,3 +14,4 @@ export * from './domain/import';
 export * from './domain/support';
 export * from './domain/estimate';
 export * from './domain/lead';
+export * from './domain/navigation';
