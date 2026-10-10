@@ -74,3 +74,8 @@ export function startOfMonth(year: number, monthIndex: number): ISODate {
 export function startOfNextMonth(year: number, monthIndex: number): ISODate {
   return toISODate(new Date(Date.UTC(year, monthIndex + 1, 1)));
 }
+
+// 'YYYY-MM-DD' + 'HH:mm' in the user's local time → ISO instant for timestamptz.
+export function localDateTimeToIso(date: string, time: string): string {
+  return new Date(`${date}T${time}`).toISOString();
+}

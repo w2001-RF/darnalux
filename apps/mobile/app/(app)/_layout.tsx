@@ -1,7 +1,8 @@
-import { Redirect, Tabs } from 'expo-router';
+import { Redirect, Stack } from 'expo-router';
 import { useAuth } from '../../src/features/auth/AuthContext';
 import { useTheme } from '../../src/theme';
 
+// Stack around the bottom tabs: every detail or secondary screen pushes on top of them.
 export default function AppLayout() {
   const { status } = useAuth();
   const theme = useTheme();
@@ -9,16 +10,14 @@ export default function AppLayout() {
   if (status === 'signed-out') return <Redirect href="/login" />;
 
   return (
-    <Tabs
+    <Stack
       screenOptions={{
-        tabBarActiveTintColor: theme.primary,
-        tabBarStyle: { backgroundColor: theme.surface, borderTopColor: theme.border },
         headerStyle: { backgroundColor: theme.surface },
         headerTintColor: theme.text,
+        contentStyle: { backgroundColor: theme.background },
       }}
     >
-      <Tabs.Screen name="home" options={{ title: 'Accueil' }} />
-      <Tabs.Screen name="profile" options={{ title: 'Profil' }} />
-    </Tabs>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    </Stack>
   );
 }

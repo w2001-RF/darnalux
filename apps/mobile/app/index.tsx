@@ -15,5 +15,5 @@ export default function Entry() {
     );
   }
 
-  return <Redirect href={status === 'signed-in' ? '/home' : '/login'} />;
+  return <Redirect href={status === 'signed-in' ? '/dashboard' : '/login'} />;
 }

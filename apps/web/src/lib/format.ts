@@ -51,10 +51,7 @@ export function formatRelative(value: string): string {
   return formatDateTime(value);
 }
 
-// 'YYYY-MM-DD' + 'HH:mm' in the user's local time → ISO instant for timestamptz.
-export function localDateTimeToIso(date: string, time: string): string {
-  return new Date(`${date}T${time}`).toISOString();
-}
+export { localDateTimeToIso } from '@darnalux/core';
 
 // ISO instant → value for <input type="datetime-local">.
 export function isoToLocalInput(value: string | null | undefined): string {

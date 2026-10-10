@@ -4,11 +4,15 @@
     "slug": "darnalux",
     "version": "0.1.0",
     "scheme": "darnalux",
-    "orientation": "portrait",
+    "orientation": "default",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": { "supportsTablet": false, "bundleIdentifier": "ma.darnalux.mobile" },
-    "android": { "package": "ma.darnalux.mobile" },
+    "android": {
+      "package": "ma.darnalux.mobile",
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
     "plugins": ["expo-router"]
   }
 }

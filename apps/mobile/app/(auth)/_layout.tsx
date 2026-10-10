@@ -3,6 +3,6 @@ import { useAuth } from '../../src/features/auth/AuthContext';
 
 export default function AuthLayout() {
   const { status } = useAuth();
-  if (status === 'signed-in') return <Redirect href="/home" />;
+  if (status === 'signed-in') return <Redirect href="/dashboard" />;
   return <Stack screenOptions={{ headerShown: false }} />;
 }

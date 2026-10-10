@@ -12,6 +12,7 @@ import {
   KeyRound,
   LineChart,
   Mail,
+  MessageCircle,
   MapPin,
   Search,
   Phone,
@@ -25,10 +26,13 @@ import type { LucideIcon } from 'lucide-react';
 import { Brand } from '../components/Brand';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { ESTIMATE_ZONES, PROPERTY_CONFIGS, estimateRevenue } from '@darnalux/core';
-import { CONTACT_EMAIL, CONTACT_PHONE } from '../lib/contact';
+import { buildWhatsappUrl } from '@darnalux/core';
+import { CONTACT_EMAIL, CONTACT_PHONE, WHATSAPP_NUMBER } from '../lib/contact';
 import { submitContactRequest } from '../features/leads/api';
 import { toUserMessage } from '../lib/errors';
 import '../landing.css';
+
+const WHATSAPP_URL = buildWhatsappUrl(WHATSAPP_NUMBER, 'Bonjour DarnaLux, je souhaite des informations sur la gestion de mon bien.');
 
 const stats = [['24/7', 'Suivi opérationnel'], ['100%', 'Vue centralisée'], ['1', 'Interlocuteur dédié']];
 
@@ -535,6 +539,12 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+      {WHATSAPP_URL && (
+        <a className="whatsapp-fab" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" aria-label="Nous contacter sur WhatsApp">
+          <MessageCircle size={26} aria-hidden="true" />
+          <span>WhatsApp</span>
+        </a>
+      )}
     </div>
   );
 }
