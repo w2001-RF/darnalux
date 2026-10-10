@@ -21,6 +21,7 @@ import {
   Wallet,
   BarChart3,
   Bell,
+  Inbox,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { PermissionCode } from '@darnalux/core';
@@ -72,7 +73,10 @@ export const NAV_SECTIONS: NavSection[] = [
   },
   {
     title: 'Marketing',
-    items: [{ to: '/app/marketing', label: 'Campagnes & analytics', icon: Megaphone, anyOf: [P.MARKETING_VIEW] }],
+    items: [
+      { to: '/app/marketing', label: 'Campagnes & analytics', icon: Megaphone, anyOf: [P.MARKETING_VIEW] },
+      { to: '/app/leads', label: 'Demandes', icon: Inbox, anyOf: [P.MARKETING_VIEW] },
+    ],
   },
   {
     title: 'Pilotage',
