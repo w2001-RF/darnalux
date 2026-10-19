@@ -91,5 +91,5 @@ const styles = StyleSheet.create({
   bubble: { borderWidth: 1, borderRadius: 12, padding: spacing.md, gap: spacing.xs, maxWidth: '90%' },
   mine: { alignSelf: 'flex-end' },
   theirs: { alignSelf: 'flex-start' },
-  meta: { fontSize: 11 },
+  meta: { fontSize: 12 },
 });

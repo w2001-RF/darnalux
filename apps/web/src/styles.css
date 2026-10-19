@@ -195,7 +195,7 @@ input {
 
 .brand-sub {
   margin-top: 3px;
-  font-size: 0.52rem;
+  font-size: 0.75rem;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: rgb(212 175 55 / 0.6);
@@ -209,7 +209,7 @@ input {
 
 .eyebrow {
   display: block;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   letter-spacing: 4px;
   font-weight: 700;
   text-transform: uppercase;
@@ -247,13 +247,13 @@ input {
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  padding: 13px 30px;
+  min-height: 44px;
+  padding: 11px 24px;
   border: 1px solid transparent;
-  border-radius: 0;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0;
   line-height: 1.2;
   text-decoration: none;
   white-space: nowrap;
@@ -276,8 +276,6 @@ input {
 .btn-primary:hover:not(:disabled),
 .btn-gold:hover:not(:disabled) {
   background: var(--gold-l);
-  box-shadow: 0 8px 28px rgb(212 175 55 / 0.35);
-  transform: translateY(-2px);
 }
 
 .btn-ghost {
@@ -295,7 +293,6 @@ input {
   padding-inline: 4px;
   background: none;
   color: var(--gold-text);
-  letter-spacing: 2px;
 }
 
 .btn-link:hover {
@@ -307,13 +304,15 @@ input {
 }
 
 .btn-sm {
+  min-height: 44px;
   padding: 9px 18px;
-  font-size: 0.66rem;
+  font-size: 0.875rem;
 }
 
 .btn-lg {
-  padding: 16px 40px;
-  font-size: 0.74rem;
+  min-height: 52px;
+  padding: 14px 32px;
+  font-size: 1rem;
 }
 
 .btn-block {
@@ -329,7 +328,7 @@ input {
 }
 
 .field label {
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -443,7 +442,7 @@ input {
   gap: 6px;
   padding: 3px 10px;
   border: 1px solid transparent;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -530,8 +529,8 @@ input {
 
 .avatar {
   flex: none;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -604,7 +603,7 @@ input {
 }
 
 .nav nav a {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   font-weight: 500;
@@ -755,7 +754,7 @@ input {
   align-items: center;
   gap: 10px;
   margin-top: 32px;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   letter-spacing: 1px;
   color: rgb(255 255 255 / 0.65);
 }
@@ -792,7 +791,7 @@ input {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   letter-spacing: 2.5px;
   text-transform: uppercase;
   color: var(--gold);
@@ -802,7 +801,7 @@ input {
   padding: 3px 10px;
   border: 1px solid rgb(255 255 255 / 0.12);
   color: var(--mist);
-  font-size: 0.56rem;
+  font-size: 0.75rem;
   letter-spacing: 1.5px;
 }
 
@@ -818,7 +817,7 @@ input {
 .big-number small {
   margin-left: 10px;
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -845,7 +844,7 @@ input {
 }
 
 .mini-grid span {
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--mist);
@@ -858,7 +857,7 @@ input {
   margin-top: 2px;
   padding: 13px 14px;
   background: rgb(0 40 68 / 0.4);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: rgb(255 255 255 / 0.6);
 }
 
@@ -921,7 +920,7 @@ input {
 
 .stats span {
   margin-top: 10px;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--muted);
@@ -995,7 +994,6 @@ input {
 }
 
 .feature:hover {
-  transform: translateY(-3px);
 }
 
 .feature:hover::before,
@@ -1073,7 +1071,6 @@ input {
 }
 
 .step:hover {
-  transform: translateY(-4px);
   border-color: rgb(212 175 55 / 0.3);
 }
 
@@ -1177,7 +1174,7 @@ input {
   margin-top: 32px;
   padding-top: 22px;
   border-top: 1px solid var(--line-neutral);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   letter-spacing: 0.5px;
 }
 
@@ -1228,7 +1225,7 @@ input {
 }
 
 .auth-aside small {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   letter-spacing: 1px;
   color: rgb(255 255 255 / 0.55);
 }
@@ -1358,7 +1355,7 @@ input {
   margin: 0 12px 12px;
   padding-bottom: 10px;
   border-bottom: 1px solid rgb(212 175 55 / 0.15);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   letter-spacing: 3px;
   font-weight: 700;
   color: var(--gold);
@@ -1379,11 +1376,11 @@ input {
   border-left: 2px solid transparent;
   color: rgb(255 255 255 / 0.55);
   text-decoration: none;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  transition: all 0.3s var(--ease);
+  transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease), opacity 0.3s var(--ease);
 }
 
 .side-link:hover,
@@ -1424,7 +1421,7 @@ input {
 
 .side-user-info small {
   color: var(--mist);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
 }
 
 .side-user .icon-btn {
@@ -1533,7 +1530,7 @@ input {
 }
 
 .panel-head-note {
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
@@ -1568,7 +1565,7 @@ input {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -1600,7 +1597,7 @@ input {
 
 .kpi small {
   color: var(--success);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
@@ -1644,7 +1641,7 @@ input {
 
 .row small {
   margin-top: 3px;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--muted);
 }
 
@@ -1688,7 +1685,7 @@ input {
 .data-table th {
   padding: 13px 24px;
   text-align: left;
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -1744,7 +1741,7 @@ input {
   background: var(--surface-soft);
   border: 1px solid var(--line);
   color: var(--text-soft);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   letter-spacing: 0.3px;
 }
 
@@ -1802,7 +1799,7 @@ input {
 .role-card small {
   display: block;
   margin-top: 2px;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
@@ -1813,7 +1810,7 @@ input {
   align-items: center;
   gap: 6px;
   margin-bottom: 18px;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -1854,7 +1851,7 @@ input {
 }
 
 .facts dt {
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -1898,7 +1895,7 @@ input {
   font-size: 0.86rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s var(--ease);
+  transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease), opacity 0.3s var(--ease);
 }
 
 .role-option:hover {
@@ -2093,7 +2090,7 @@ input {
   }
 
   .stats span {
-    font-size: 0.56rem;
+    font-size: 0.75rem;
     letter-spacing: 1px;
   }
 

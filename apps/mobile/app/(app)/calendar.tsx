@@ -139,5 +139,5 @@ const styles = StyleSheet.create({
   weekday: { flex: 1, textAlign: 'center', fontSize: 12, fontWeight: '600' },
   cell: { flex: 1, aspectRatio: 1, borderWidth: 1, borderRadius: 8, alignItems: 'center', justifyContent: 'center', gap: 2 },
   dot: { minWidth: 18, height: 18, borderRadius: 9, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 },
-  dotText: { fontSize: 11, fontWeight: '700' },
+  dotText: { fontSize: 12, fontWeight: '700' },
 });

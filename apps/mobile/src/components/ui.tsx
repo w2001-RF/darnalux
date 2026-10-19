@@ -323,7 +323,7 @@ function Separator() {
 
 const styles = StyleSheet.create({
   badge: { borderWidth: 1, borderRadius: 999, paddingHorizontal: 9, paddingVertical: 2, alignSelf: 'flex-start' },
-  badgeText: { fontSize: 11, fontWeight: '700' },
+  badgeText: { fontSize: 12, fontWeight: '700' },
   card: { borderWidth: 1, borderRadius: 12, padding: spacing.md, gap: spacing.xs },
   pressed: { opacity: 0.7 },
   rowTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm },

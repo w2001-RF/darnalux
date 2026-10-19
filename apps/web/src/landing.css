@@ -285,7 +285,7 @@ html {
 }
 
 .footer-links a {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: inherit;
@@ -368,7 +368,7 @@ html {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--mist);
@@ -381,7 +381,7 @@ html {
   place-items: center;
   border: 1px solid rgb(255 255 255 / 0.2);
   border-radius: 50%;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
 }
 
 .stepper li.active {
@@ -403,7 +403,7 @@ html {
 .estimator label {
   display: grid;
   gap: 7px;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--mist);
@@ -454,7 +454,7 @@ html {
   background: none;
   border: 0;
   font: inherit;
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   color: var(--mist);
   text-decoration: underline;
   cursor: pointer;
@@ -470,7 +470,7 @@ html {
 }
 
 .result-label {
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gold);
@@ -500,14 +500,14 @@ html {
 }
 
 .result-disclaimer {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--mist);
 }
 
 .estimator-foot {
   margin: 0;
   text-align: center;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   letter-spacing: 1px;
   color: var(--mist);
 }
@@ -549,7 +549,7 @@ html {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gold);
@@ -585,7 +585,7 @@ html {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   letter-spacing: 0;
   text-transform: none;
   line-height: 1.5;
@@ -682,7 +682,7 @@ html {
 .contact-form label {
   display: grid;
   gap: 8px;
-  font-size: 0.64rem;
+  font-size: 0.75rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--mist);
@@ -713,7 +713,7 @@ html {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   letter-spacing: 0;
   text-transform: none;
   line-height: 1.5;
@@ -788,7 +788,6 @@ html {
 }
 
 .whatsapp-fab:hover {
-  transform: translateY(-3px);
   box-shadow: 0 14px 36px rgb(0 0 0 / 0.4), 0 0 0 2px var(--gold);
 }
 
